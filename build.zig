@@ -569,6 +569,7 @@ pub fn build(b: *std.Build) void {
     module.addOptions("build-options", options);
 
     module.addIncludePath(b.path("libs/flecs"));
+    module.link_libc = true;
     module.addCSourceFile(.{
         .file = b.path("libs/flecs/flecs.c"),
         .flags = &.{
@@ -651,19 +652,18 @@ pub fn build(b: *std.Build) void {
             if (opt_dag_depth_max) |value| convertSizeFlag(b.allocator, "FLECS_DAG_DEPTH_MAX", value) else "",
         },
     });
+    if (target.result.os.tag == .windows) {
+        module.linkSystemLibrary("ws2_32", .{});
+        module.linkSystemLibrary("dbghelp", .{});
+    }
 
     const lib = b.addLibrary(.{
         .name = "flecs",
         .linkage = if (opt_use_shared) .dynamic else .static,
         .root_module = module,
     });
-    lib.linkLibC();
     b.installArtifact(lib);
 
-    if (target.result.os.tag == .windows) {
-        lib.linkSystemLibrary("ws2_32");
-        lib.linkSystemLibrary("dbghelp");
-    }
     const test_step = b.step("test", "Run zflecs tests");
 
     const tests_module = b.createModule(.{
@@ -671,15 +671,15 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    tests_module.addIncludePath(b.path("libs/flecs"));
+    tests_module.linkLibrary(lib);
+    tests_module.link_libc = true;
     tests_module.addOptions("build-options", options);
 
     const tests = b.addTest(.{
         .name = "zflecs-tests",
         .root_module = tests_module,
     });
-    tests.addIncludePath(b.path("libs/flecs"));
-    tests.linkLibrary(lib);
-    tests.linkLibC();
     b.installArtifact(tests);
 
     test_step.dependOn(&b.addRunArtifact(tests).step);
