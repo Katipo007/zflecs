@@ -14,6 +14,7 @@ const Direction = enum { north, south, east, west };
 
 test {
     std.testing.refAllDecls(@This());
+    std.testing.refAllDecls(ecs);
 }
 
 test "extern struct ABI compatibility" {

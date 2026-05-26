@@ -1543,10 +1543,6 @@ extern fn ecs_set_stage_count(world: *world_t, stages: i32) void;
 pub const get_stage_count = ecs_get_stage_count;
 extern fn ecs_get_stage_count(world: *const world_t) i32;
 
-/// `pub fn get_stage_id(world: *const world_t) i32`
-pub const get_stage_id = ecs_get_stage_id;
-extern fn ecs_get_stage_id(world: *const world_t) i32;
-
 /// `pub fn get_stage(world: *const world_t, stage_id: i32) *world_t`
 pub const get_stage = ecs_get_stage;
 extern fn ecs_get_stage(world: *const world_t, stage_id: i32) *world_t;
@@ -1555,17 +1551,6 @@ extern fn ecs_get_stage(world: *const world_t, stage_id: i32) *world_t;
 pub const stage_is_readonly = ecs_stage_is_readonly;
 extern fn ecs_stage_is_readonly(world: *const world_t) bool;
 
-/// `pub fn async_stage_new(world: *world_t) *world_t`
-pub const async_stage_new = ecs_stage_new;
-extern fn ecs_stage_new(world: *world_t) *world_t;
-
-/// `pub fn async_stage_free(world: *world_t) *world_t`
-pub const async_stage_free = ecs_async_stage_free;
-extern fn ecs_async_stage_free(world: *world_t) *world_t;
-
-/// `pub fn stage_is_async(world: *const world_t) bool`
-pub const stage_is_async = ecs_stage_is_async;
-extern fn ecs_stage_is_async(world: *const world_t) bool;
 //--------------------------------------------------------------------------------------------------
 //
 // Misc
@@ -1794,10 +1779,6 @@ extern fn ecs_ref_update(world: *const world_t, ref: *ref_t) void;
 pub const get_mut_id = ecs_get_mut_id;
 extern fn ecs_get_mut_id(world: *world_t, entity: entity_t, component: id_t) ?*anyopaque;
 
-/// `pub fn get_mut_modified_id(world: *world_t, entity: entity_t, id: id_t) ?*anyopaque`
-pub const get_mut_modified_id = ecs_get_mut_modified_id;
-extern fn ecs_get_mut_modified_id(world: *world_t, entity: entity_t, id: id_t) ?*anyopaque;
-
 /// `pub fn write_begin(world: *world_t, entity: entity_t) ?*record_t`
 pub const write_begin = ecs_write_begin;
 extern fn ecs_write_begin(world: *world_t, entity: entity_t) ?*record_t;
@@ -1821,10 +1802,6 @@ extern fn ecs_record_get_entity(record: *const record_t) entity_t;
 /// `pub fn record_get_id(world: *world_t, record: *const record_t, id: id_t) ?*const anyopaque`
 pub const record_get_id = ecs_record_get_id;
 extern fn ecs_record_get_id(world: *const world_t, record: *const record_t, id: id_t) ?*const anyopaque;
-
-/// `pub fn record_get_mut_id(world: *world_t, record: *record_t, id: id_t) ?*anyopaque`
-pub const record_get_mut_id = ecs_record_get_mut_id;
-extern fn ecs_record_get_mut_id(world: *world_t, record: *record_t, id: id_t) ?*anyopaque;
 
 /// `pub fn record_has_id(world: *world_t, record: *const record_t, id: id_t) bool`
 pub const record_has_id = ecs_record_has_id;
@@ -2071,7 +2048,7 @@ extern fn ecs_get_path_w_sep(
     child: entity_t,
     sep: ?[*:0]const u8,
     prefix: ?[*:0]const u8,
-) ?[*]u8;
+) [*c]u8;
 
 /// ```
 /// pub fn ecs_get_path_w_sep_buf(
@@ -2177,10 +2154,6 @@ extern fn ecs_get_hooks_id(world: *const world_t, component: entity_t) *const ty
 pub const id_is_tag = ecs_id_is_tag;
 extern fn ecs_id_is_tag(world: *const world_t, component: id_t) bool;
 
-/// `pub fn id_is_union(world: *const world_t, id: id_t) bool;
-pub const id_is_union = ecs_id_is_union;
-extern fn ecs_id_is_union(world: *const world_t, id: id_t) bool;
-
 /// `pub fn id_in_use(world: *const world_t, component: id_t) bool`
 pub const id_in_use = ecs_id_in_use;
 extern fn ecs_id_in_use(world: *const world_t, component: id_t) bool;
@@ -2239,10 +2212,6 @@ pub fn each(world: *const world_t, comptime T: type) iter_t {
 pub const each_id = ecs_each_id;
 extern fn ecs_each_id(world: *const world_t, component: id_t) iter_t;
 
-/// `pub fn term_chain_iter(world: *const world_t, term: *term_t) iter_t`
-pub const term_chain_iter = ecs_term_chain_iter;
-extern fn ecs_term_chain_iter(world: *const world_t, term: *term_t) iter_t;
-
 /// `pub fn term_next(it: *iter_t) bool`
 pub const each_next = ecs_each_next;
 extern fn ecs_each_next(it: *iter_t) bool;
@@ -2255,9 +2224,9 @@ extern fn ecs_children(world: *const world_t, parent: entity_t) iter_t;
 pub const children_next = ecs_children_next;
 extern fn ecs_children_next(it: *iter_t) bool;
 
-/// `pub fn term_id_is_set(ref: *term_id_t) bool`
-pub const term_id_is_set = ecs_term_id_is_set;
-extern fn ecs_term_id_is_set(ref: *term_ref_t) bool;
+/// `pub fn term_is_initialized(term: *const term_t) bool`
+pub const term_ref_is_set = ecs_term_ref_is_set;
+extern fn ecs_term_ref_is_set(term: *const term_t) bool;
 
 /// `pub fn term_is_initialized(term: *const term_t) bool`
 pub const term_is_initialized = ecs_term_is_initialized;
@@ -2270,10 +2239,6 @@ extern fn ecs_term_match_this(term: *const term_t) bool;
 /// `pub fn term_match_0(term: *const term_t) bool`
 pub const term_match_0 = ecs_term_match_0;
 extern fn ecs_term_match_0(term: *const term_t) bool;
-
-/// `pub fn term_finalize(world: *const world_t, term: *term_t) i32`
-pub const term_finalize = ecs_term_finalize;
-extern fn ecs_term_finalize(world: *const world_t, term: *term_t) i32;
 
 /// `pub fn term_str(world: *const world_t, term: *const term_t) ?[*:0]u8`
 pub const term_str = ecs_term_str;
@@ -2304,14 +2269,6 @@ extern fn ecs_query_iter(world: *const world_t, query: *const query_t) iter_t;
 /// `pub fn query_next(iter: *iter_t) bool`
 pub const query_next = ecs_query_next;
 extern fn ecs_query_next(iter: *iter_t) bool;
-
-/// `pub fn query_next_table(iter: *iter_t) bool`
-pub const query_next_table = ecs_query_next_table;
-extern fn ecs_query_next_table(iter: *iter_t) bool;
-
-/// `pub fn query_populate(iter: *iter_t, when_changed: bool) c_int`
-pub const query_populate = ecs_query_populate;
-extern fn ecs_query_populate(iter: *iter_t, when_changed: bool) c_int;
 
 /// `pub fn query_changed(query: *query_t) bool`
 pub const query_changed = ecs_query_changed;
@@ -2364,26 +2321,6 @@ extern fn ecs_query_get_cache_query(query: *const query_t) *const query_t;
 pub const query_str = ecs_query_str;
 extern fn ecs_query_str(query: *const query_t) [*:0]u8;
 
-/// `pub fn query_table_count(query: *const query_t) i32`
-pub const query_table_count = ecs_query_table_count;
-extern fn ecs_query_table_count(query: *const query_t) i32;
-
-/// `pub fn query_empty_table_count(query: *const query_t) i32`
-pub const query_empty_table_count = ecs_query_empty_table_count;
-extern fn ecs_query_empty_table_count(query: *const query_t) i32;
-
-/// `pub fn query_entity_count(query: *const query_t) i32`
-pub const query_entity_count = ecs_query_entity_count;
-extern fn ecs_query_entity_count(query: *const query_t) i32;
-
-/// `pub fn query_get_ctx(query: *const query_t) i32`
-pub const query_get_ctx = ecs_query_get_ctx;
-extern fn ecs_query_get_ctx(query: *const query_t) ?*anyopaque;
-
-/// `pub fn query_get_binding_ctx(query: *const query_t) i32`
-pub const query_get_binding_ctx = ecs_query_get_binding_ctx;
-extern fn ecs_query_get_binding_ctx(query: *const query_t) ?*anyopaque;
-
 //--------------------------------------------------------------------------------------------------
 //
 // Functions for working with events and observers.
@@ -2401,13 +2338,10 @@ extern fn ecs_enqueue(world: *world_t, desc: *event_desc_t) void;
 pub const observer_init = ecs_observer_init;
 extern fn ecs_observer_init(world: *world_t, desc: *const observer_desc_t) entity_t;
 
-/// `pub fn observer_get_ctx(world: *const world_t, observer: entity_t) ?*anyopaque`
-pub const observer_get_ctx = ecs_observer_get_ctx;
-extern fn ecs_observer_get_ctx(world: *const world_t, observer: entity_t) ?*anyopaque;
+/// `pub fn observer_get(world: *const world_t, observer: entity_t) ?*const observer_t`
+pub const observer_get = ecs_observer_get;
+extern fn ecs_observer_get(world: *const world_t, observer: entity_t) ?*const observer_t;
 
-/// `pub fn observer_get_binding_ctx(world: *const world_t, observer: entity_t) ?*anyopaque`
-pub const observer_get_binding_ctx = ecs_observer_get_binding_ctx;
-extern fn ecs_observer_get_binding_ctx(world: *const world_t, observer: entity_t) ?*anyopaque;
 //--------------------------------------------------------------------------------------------------
 //
 // Functions for working with `iter_t`.
@@ -2421,10 +2355,6 @@ pub const entities_t = extern struct {
 /// `pub fn get_entities(world: *const world_t) entities_t;
 pub const get_entities = ecs_get_entities;
 extern fn ecs_get_entities(world: *const world_t) entities_t;
-
-/// `pub fn get_flags(world: *const world_t) flags32_t`
-pub const get_flags = ecs_get_flags;
-extern fn ecs_get_flags(world: *const world_t) flags32_t;
 
 /// `pub fn iter_next(it: *iter_t) bool`
 pub const iter_next = ecs_iter_next;
@@ -2511,8 +2441,8 @@ pub const field_w_size = ecs_field_w_size;
 extern fn ecs_field_w_size(it: *const iter_t, size: usize, index: i8) ?*anyopaque;
 
 /// `pub fn field_w_size(it: *const iter_t, size: usize, index: i8) ?*anyopaque`
-pub const ecs_field_at_w_size = ecs_ecs_field_at_w_size;
-extern fn ecs_ecs_field_at_w_size(it: *const iter_t, size: usize, index: i8, row: i32) ?*anyopaque;
+pub const field_at_w_size = ecs_field_at_w_size;
+extern fn ecs_field_at_w_size(it: *const iter_t, size: usize, index: i8, row: i32) ?*anyopaque;
 
 /// `pub fn field_is_readonly(it: *const iter_t, index: i8) bool`
 pub const field_is_readonly = ecs_field_is_readonly;
@@ -2634,10 +2564,6 @@ extern fn ecs_table_has_flags(table: *table_t, flags: flags32_t) bool;
 pub const table_has_traversable = ecs_table_has_traversable;
 extern fn ecs_table_has_traversable(table: *const table_t) bool;
 
-/// `pub fn table_has_module(table: *const table_t) bool`
-pub const table_has_module = ecs_table_has_module;
-extern fn ecs_table_has_module(table: *const table_t) bool;
-
 /// `pub fn table_swap_rows(world: *world_t, table: *table_t, row_1: i32, row_2: i32) void`
 pub const table_swap_rows = ecs_table_swap_rows;
 extern fn ecs_table_swap_rows(world: *world_t, table: *table_t, row_1: i32, row_2: i32) void;
@@ -2665,10 +2591,6 @@ extern fn ecs_commit(
 /// `pub fn record_find(world: *const world_t, entity: entity_t) ?*record_t`
 pub const record_find = ecs_record_find;
 extern fn ecs_record_find(world: *const world_t, entity: entity_t) ?*record_t;
-
-/// `pub fn record_get_column(r: *const record_t, column: i32, c_size: usize) ?*anyopaque`
-pub const record_get_column = ecs_record_get_column;
-extern fn ecs_record_get_column(r: *const record_t, column: i32, c_size: usize) ?*anyopaque;
 
 /// ```
 /// pub fn search(
