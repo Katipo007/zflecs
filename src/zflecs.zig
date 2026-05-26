@@ -2849,9 +2849,6 @@ extern fn ecs_using_task_threads(world: *world_t) bool;
 // Declarative functions (ECS_* macros in flecs)
 //
 //--------------------------------------------------------------------------------------------------
-// TODO: We support only one `world_t` at the time because type ids are stored in a global static memory.
-// We need to reset those ids to zero when the world is destroyed
-// (we do this in `pub fn fini(world: *world_t) i32`).
 var num_worlds: u32 = 0;
 var world_component_lookup: std.AutoHashMapUnmanaged(*const world_t, std.AutoHashMapUnmanaged(usize, id_t)) = undefined;
 
