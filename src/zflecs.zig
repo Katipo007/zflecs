@@ -1251,8 +1251,9 @@ const EcsAllocator = struct {
 
     var gpa: std.mem.Allocator = undefined;
 
-    fn alloc(size: i32) callconv(.c) ?*anyopaque {
-        if (size < 0) {
+    fn alloc(size: size_t) callconv(.c) ?*anyopaque {
+        assert(size >= 0);
+        if (size <= 0) {
             return null;
         }
 
@@ -1287,11 +1288,12 @@ const EcsAllocator = struct {
         );
     }
 
-    fn realloc(old: ?*anyopaque, size: i32) callconv(.c) ?*anyopaque {
+    fn realloc(old: ?*anyopaque, size: size_t) callconv(.c) ?*anyopaque {
         if (old == null) {
             return alloc(size);
         }
 
+        assert(size > 0);
         const ptr_unwrapped = @as([*]u8, @ptrCast(old.?)) - Alignment;
 
         const allocation_header = @as(
@@ -1314,7 +1316,8 @@ const EcsAllocator = struct {
         return new_data.ptr + Alignment;
     }
 
-    fn calloc(size: i32) callconv(.c) ?*anyopaque {
+    fn calloc(size: size_t) callconv(.c) ?*anyopaque {
+        assert(size > 0);
         const data_maybe = alloc(size);
         if (data_maybe) |data| {
             @memset(@as([*]u8, @ptrCast(data))[0..@as(usize, @intCast(size))], 0);
@@ -3068,8 +3071,8 @@ pub fn field(it: *iter_t, comptime T: type, index: i8) ?[]T {
 }
 
 pub inline fn id(world: *const world_t, comptime T: type) id_t {
-    const component_type_lookup = world_component_lookup.getPtr(world) orelse return 0;
-    const type_id = component_type_lookup.get(perTypeGlobalId(T)) orelse @panic("Uninitialised world");
+    const component_type_lookup = world_component_lookup.getPtr(world) orelse @panic("Uninitialised world");
+    const type_id = component_type_lookup.get(perTypeGlobalId(T)) orelse return 0;
     return type_id;
 }
 
